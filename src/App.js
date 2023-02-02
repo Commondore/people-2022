@@ -2,27 +2,24 @@ import Person from "components/Person/Person";
 import "./App.css";
 
 import { useState } from "react";
+import AddPersonForm from "components/AddPersonForm/AddPersonForm";
 
 function App() {
   const [people, setPeople] = useState([
-    { name: "Mike", age: 30, prof: "Программист" },
-    { name: "Sam", age: 20, prof: "UI/UX Designer" },
+    { name: "Mike", age: 30, prof: "Программист", id: 1 },
+    { name: "Sam", age: 20, prof: "UI/UX Designer", id: 2 },
+    { name: "John", age: 40, prof: "Тунеядец", id: 3 },
   ]);
-
+  // const [input, setInput] = useState("");
   const [title, setTitle] = useState("Hello React");
+  const [show, setShow] = useState(true);
 
-  const changeName = () => {
-    // const person = { ...people[0] };
-    // person.name = "Ketty";
-    // const copyPeople = [...people];
-    // copyPeople[0] = person;
-
-    // setPeople(copyPeople);
-
+  const changeName = (id, event) => {
     setPeople(() => {
-      return people.map((person, index) => {
-        if (index === 1) {
-          person.name = "Ketty";
+      return people.map((person) => {
+        // [{}, {}]
+        if (person.id === id) {
+          person.name = event.target.value;
         }
         return person;
       });
@@ -33,34 +30,68 @@ function App() {
     setTitle("New title");
   };
 
-  const increaseAge = () => {
-    const copy = people.map((person) => {
-      //{ name: "Mike", age: 30, prof: "Программист" }
-      return {
-        ...person,
-        age: person.age + 1,
-      };
-    });
-    setPeople(copy);
+  const increaseAge = (id) => {
+    const index = people.findIndex((person) => person.id === id);
+    const person = { ...people[index] };
+    person.age++;
+    const copyPeople = [...people];
+    copyPeople[index] = person;
+
+    setPeople(copyPeople);
   };
+
+  const togglePeople = () => {
+    setShow((show) => !show);
+  };
+
+  const removePerson = (id) => {
+    setPeople((people) => {
+      return people.filter((person) => person.id !== id);
+    });
+  };
+
+  const addPerson = (person, event) => {
+    event.preventDefault();
+
+    setPeople((people) => {
+      return [...people, { ...person }];
+    });
+  };
+
+  // const changeHandler = (event) => setInput(event.target.value)
+
+  let list = null;
+
+  if (show) {
+    list = (
+      <div className="people">
+        {people.map((person) => {
+          return (
+            <Person
+              key={person.id}
+              name={person.name}
+              age={person.age}
+              increase={() => increaseAge(person.id)}
+              change={(event) => changeName(person.id, event)}
+              remove={() => removePerson(person.id)}
+            >
+              {person.prof}
+            </Person>
+          );
+        })}
+      </div>
+    );
+  }
 
   return (
     <div className="App">
       <h1 onClick={changeTitle}>{title}</h1>
-      <button className="btn" onClick={changeName}>
-        Change Name
+      <AddPersonForm add={addPerson} />
+      <button className="btn" onClick={togglePeople}>
+        Toggle people
       </button>
-      <button className="btn" onClick={increaseAge}>
-        Увеличить возраст
-      </button>
-      <div className="people">
-        <Person name={people[0].name} age={people[0].age}>
-          {people[0].prof}
-        </Person>
-        <Person name={people[1].name} age={people[1].age}>
-          {people[1].prof}
-        </Person>
-      </div>
+      {/* <input type="text" value={input} onChange={changeHandler} /> */}
+      {list}
     </div>
   );
 }
