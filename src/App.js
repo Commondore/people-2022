@@ -1,8 +1,11 @@
-import Person from "components/Person/Person";
 import "./App.css";
 
 import { useState } from "react";
 import AddPersonForm from "components/AddPersonForm/AddPersonForm";
+import People from "components/People/People";
+import ToggleButton from "components/ToggleButton/ToggleButton";
+import Counter from "components/Counter/Counter";
+import Example from "components/Example/Example";
 
 function App() {
   const [people, setPeople] = useState([
@@ -58,40 +61,25 @@ function App() {
     });
   };
 
-  // const changeHandler = (event) => setInput(event.target.value)
-
-  let list = null;
-
-  if (show) {
-    list = (
-      <div className="people">
-        {people.map((person) => {
-          return (
-            <Person
-              key={person.id}
-              name={person.name}
-              age={person.age}
-              increase={() => increaseAge(person.id)}
-              change={(event) => changeName(person.id, event)}
-              remove={() => removePerson(person.id)}
-            >
-              {person.prof}
-            </Person>
-          );
-        })}
-      </div>
-    );
-  }
-
   return (
     <div className="App">
       <h1 onClick={changeTitle}>{title}</h1>
+      <Example />
       <AddPersonForm add={addPerson} />
-      <button className="btn" onClick={togglePeople}>
-        Toggle people
-      </button>
-      {/* <input type="text" value={input} onChange={changeHandler} /> */}
-      {list}
+      <ToggleButton show={show} toggle={togglePeople}>
+        Toggle
+      </ToggleButton>
+
+      <Counter data={people}>Количество людей:</Counter>
+
+      {show && (
+        <People
+          people={people}
+          change={changeName}
+          increase={increaseAge}
+          remove={removePerson}
+        />
+      )}
     </div>
   );
 }

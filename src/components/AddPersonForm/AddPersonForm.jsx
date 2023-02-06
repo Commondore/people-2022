@@ -62,7 +62,7 @@ const AddPersonForm = (props) => {
           />
         </div>
 
-        <button className="btn btn-danger">Add</button>
+        <button className="btn">Add</button>
       </form>
     </div>
   );
